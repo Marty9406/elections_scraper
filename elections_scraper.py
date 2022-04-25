@@ -26,7 +26,6 @@ def get_main_page():
 
 
 def get_code_list(main_page):
-    all_links = main_page.find_all("a")
     continents = [
         "Evropa",
         "Asie",
@@ -36,6 +35,7 @@ def get_code_list(main_page):
     ]
     code_list = []
     link_list = []
+    all_links = main_page.find_all("a")
     for link in all_links:
         if link.text.isnumeric() and len(link.text) == 6 or link.text in continents:
             code_list.append(link.text)
@@ -57,13 +57,14 @@ def get_city_info(city_link, city_code):
     city_info = [city_code]
     city_page = requests.get(city_link)
     city_page_soup = bs4.BeautifulSoup(city_page.text, "html.parser")
-    city_info.append(str(city_page_soup.find_all("h3")[len(city_page_soup.find_all("h3"))-3].text).split(":")[1].strip())  # add name of the city
-    city_info.append("".join(str(city_page_soup.find_all("td")[3].text).split()))  # add number of eligible voters
-    city_info.append("".join(str(city_page_soup.find_all("td")[4].text).split()))  # add number of issued envelopes
-    city_info.append("".join(str(city_page_soup.find_all("td")[7].text).split()))  # add number of valid votes
+    h3_number = len(city_page_soup.find_all("h3"))-3  # because of different number of h3 tags on Prague pages
+    city_info.append(str(city_page_soup.find_all("h3")[h3_number].text).split(":")[1].strip())  # adds name of the city
+    city_info.append("".join(str(city_page_soup.find_all("td")[3].text).split()))  # adds number of eligible voters
+    city_info.append("".join(str(city_page_soup.find_all("td")[4].text).split()))  # adds number of issued envelopes
+    city_info.append("".join(str(city_page_soup.find_all("td")[7].text).split()))  # adds number of valid votes
     for parti in city_page_soup.find_all("td")[11::5]:
-        if parti.text != "-":
-            city_info.append(parti.text)
+        if parti.text != "-":  # because of empty lines in some tables
+            city_info.append(parti.text)  # adds party results
     return city_info
 
 
