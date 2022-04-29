@@ -1,3 +1,9 @@
+"""
+author:  Martin Rečka
+email: martinrec@seznam.cz
+discord: Martin Rečka#2020
+"""
+
 import sys
 import csv
 import bs4
